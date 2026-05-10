@@ -54,5 +54,4 @@ Il codice richiede le seguenti librerie Python:
 
 ## Esempio di Output
 Il tool genera un report grafico che mostra la distribuzione di densità della PD e posiziona la stima del modello rispetto alla zona di rifiuto statistico.
-
-![Grafico Validazione](validazione_Portafoglio_Corporate.png)
+![Validazione PD](validazione_Portafoglio_Mutui_Retail.png)

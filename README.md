@@ -1,65 +1,67 @@
-# PD Model Validation Tool: The Jeffrey’s Test Framework
+# PD Model Validation Framework: Jeffrey’s Test vs. Binomial Approach
 
-This repository provides a professional Python implementation of the **Jeffrey’s Test**, a Bayesian calibration tool specifically designed for the backtesting of **Probability of Default (PD)** models. 
+This repository provides an advanced Python toolkit for the validation of **Probability of Default (PD)** models. It specifically addresses the challenges of **Low-Default Portfolios (LDP)** by implementing a comparative analysis between Bayesian (Jeffrey’s) and Frequentist (Binomial) statistical frameworks.
 
-This framework is built to align with the **ECB (European Central Bank)** and **EBA (European Banking Authority)** requirements for Internal Rating-Based (IRB) systems.
+The project is designed to meet the rigorous standards set by the **European Central Bank (ECB)** and the **European Banking Authority (EBA)**.
 
 ---
 
-## Regulatory Context & Compliance
+## Regulatory Framework & Compliance
 
-### 1. ECB Validation Reporting (Chapter 2.5.3)
-In accordance with the **ECB Instructions on Validation Reporting (Section 2.5.3 - Predictive Ability)**, banks are required to demonstrate that their PD estimates are accurate predictors of realized default rates. For **Low-Default Portfolios (LDP)**, where traditional frequentist tests (like the Binomial Test) lack statistical power, the ECB allows for alternative robust methodologies. This tool bridges that gap by providing a Bayesian significance test.
+### 1. ECB Instruction 2.5.3 (Predictive Ability)
+According to the **ECB Instructions on Validation Reporting (Section 2.5.3)**, banks must demonstrate the predictive power of their internal models. For LDPs, where default events are sparse, traditional tests often lack the necessary power. This tool implements the Jeffrey’s Test as a robust alternative to ensure model accuracy.
 
 ### 2. Supervisory Guide 2025 & EBA/GL/2017/16
-The **ECB Supervisory Guide 2025** and **EBA Guidelines** emphasize the principle of **Prudence**. Where data is scarce, models must incorporate a **Margin of Conservatism (MoC)**. The Jeffrey’s Test is a standard-of-practice for:
-* **Quantifying Underestimation:** Measuring the probability that the realized default rate exceeds the PD estimate.
-* **Rating Grade Analysis:** Validating calibration at a granular "Rating Bucket" level, as expected during On-Site Inspections (OSI).
+The **ECB Supervisory Guide 2025** emphasizes the "Principle of Prudence." This tool helps quantify the **Margin of Conservatism (MoC)** by identifying if a model systematically underestimates risk, a key requirement for **IRB (Internal Rating-Based)** systems.
 
 ---
 
-## Statistical Rationale: Why Jeffrey’s Test?
+## The "Zero-Default" Paradox: Frequentist vs. Bayesian
 
-The Jeffrey’s Test utilizes a **Non-informative Prior** based on the $Beta(0.5, 0.5)$ distribution. This approach has critical implications for PD validation:
+A core feature of this study is the comparison between the **Binomial Test** and the **Jeffrey’s Test**, particularly in cases where no defaults are observed ($D=0$).
 
-* **Handling Zero Defaults:** In portfolios with zero realized defaults, frequentist models often fail to provide a meaningful p-value. Jeffrey’s Prior effectively assumes a "0.5 default" baseline, preventing the collapse of the statistical inference.
-* **Posterior PDF:** By updating the Prior with observed data ($D$ defaults, $N$ non-defaults), we obtain a **Posterior Beta Distribution**:
-  $$P(\text{PD} | \text{Data}) \sim Beta(D + 0.5, N - D + 0.5)$$
-* **One-Tailed Significance:** The test focuses on the "right tail" of the distribution to identify if the model is systematically underestimating risk—the primary concern for financial regulators.
+| Feature | Binomial Test (Frequentist) | Jeffrey's Test (Bayesian) |
+| :--- | :--- | :--- |
+| **Philosophy** | Relies solely on observed data. | Incorporates a non-informative $Beta(0.5, 0.5)$ prior. |
+| **LDP Performance** | Low power. Often yields $p=1.0$ if $D=0$. | High power. Provides a conservative p-value. |
+| **Regulatory Fit** | Standard, but prone to "type II" errors. | Recommended for its "Healthy Skepticism." |
+| **Interpretation** | Probability of observing $D$ defaults. | Probability that the true PD exceeds the model PD. |
+
+### Why it matters
+In a portfolio with zero defaults, a Binomial test might fail to reject a poorly calibrated model. Jeffrey’s Test, by assuming a baseline prior, calculates the probability of underestimation even in the absence of events, ensuring higher safety margins for the bank's capital.
 
 
-
----
-
-## Features & Methodology
-
-### Traffic Light System (TLS)
-The tool categorizes validation results into a three-zone system based on the p-value:
-* **🟢 Green (p > 0.05):** The model is well-calibrated or conservative.
-* **🟡 Yellow (0.01 < p ≤ 0.05):** Monitoring is required; potential calibration drift.
-* **🔴 Red (p ≤ 0.01):** Significant underestimation. Immediate recalibration or MoC adjustment required.
-
-### Technical Implementation
-* **Language:** Python 3.x
-* **Key Libraries:** `scipy.stats` (Beta distribution), `matplotlib` (HD visualization), `pandas` (Reporting).
-* **Environment:** Optimized for Google Colab with interactive forms.
 
 ---
 
-## Visualizing Results
-The tool generates a high-definition PDF/PNG report showing the **Posterior Density Function**. This visual aid helps validators understand the "safety margin" between the model's PD and the critical rejection threshold.
+## Statistical Implementation
 
-![Validation Plot](validazione_Portafoglio_Mutui_Retail.png)
-![Validation Plot](confrontotest.png)
+The tool uses the **Posterior Beta Distribution** to model the uncertainty of the PD:
+$$f(p | D, N) = \frac{p^{D+0.5-1}(1-p)^{N-D+0.5-1}}{B(D+0.5, N-D+0.5)}$$
+
+### Key Functions:
+* `jeffreys_test()`: Calculates the Bayesian p-value and generates the Posterior PDF.
+* `compare_methodologies()`: Provides a side-by-side comparison with the Binomial CDF.
+* `traffic_light_report()`: Categorizes results into Green/Yellow/Red zones ($p \leq 0.05$ for rejection).
 
 ---
 
-## Usage
+## Visual Analytics
+
+The tool generates HD visualizations to assist in **Validation Reporting**:
+1. **Posterior PDF Plot:** Visualizes the probability density of the PD.
+2. **Comparison Curve:** Shows how the Bayesian p-value evolves vs. the Frequentist one as the sample size ($N$) increases.
+
+![Validation HD Report](validazione_Portafoglio_Mutui_Retail.png)
+
+---
+
+## Installation & Usage
 1. Clone the repository.
-2. Run the `jeffreys_test.py` script.
-3. Input your Portfolio Segment, Defaults, Non-defaults, and Model PD.
-4. Export the HD report for your Validation Document.
+2. Ensure you have `numpy`, `scipy`, and `matplotlib` installed.
+3. Run the Python script to generate the comparative analysis.
+4. Use the interactive Google Colab notebook for quick bucket-level checks.
 
 ---
-**Author:** Vittorio Pasculli 
-**Domain:** Risk Management | Credit Model Validation | Quantitative Finance
+**Project Lead:** Vittorio Pascale  
+**Keywords:** Risk Management | Model Validation | Basel III | Bayesian Statistics | Python

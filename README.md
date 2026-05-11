@@ -1,57 +1,64 @@
-# PD-model-J-Test-
-Tool in Python per il Backtesting della Probability of Default tramite Jeffreys Test 
-# 🏦 PD Backtesting Tool: Jeffreys Test (EBA Compliant)
+# PD Model Validation Tool: The Jeffrey’s Test Framework
 
-Questo repository ospita uno strumento avanzato in Python per la validazione statistica dei modelli di **Probability of Default (PD)**. Il tool implementa il **Jeffreys Test**, una metodologia Bayesiana robusta, ideale per il backtesting di portafogli bancari, in conformità con i requisiti di vigilanza europei.
+This repository provides a professional Python implementation of the **Jeffrey’s Test**, a Bayesian calibration tool specifically designed for the backtesting of **Probability of Default (PD)** models. 
 
----
-
-## Background Teorico: Il Jeffreys Test
-
-Nel contesto del rischio di credito, la validazione della PD consiste nel verificare se la probabilità stimata dal modello sia coerente con i default effettivamente osservati (*Default Rate*).
-
-### Perché usare il Jeffreys Test?
-A differenza dei test frequentisti classici (come il test Binomiale basato sulla distribuzione Normale), il Jeffreys Test utilizza un approccio **Bayesiano** con una **Prior non informativa** (distribuzione Beta con parametri $\alpha = 0.5, \beta = 0.5$).
-
-**Vantaggi principali:**
-1. **Low Default Portfolios (LDP):** È estremamente efficace per portafogli con pochi eventi di default, dove i test standard perdono potenza statistica.
-2. **Distribuzione Beta:** Fornisce una stima più precisa della distribuzione "a posteriori" della PD, permettendo di calcolare con esattezza la probabilità che il modello stia sottostimando il rischio.
-
-
+This framework is built to align with the **ECB (European Central Bank)** and **EBA (European Banking Authority)** requirements for Internal Rating-Based (IRB) systems.
 
 ---
 
-## Conformità Normativa (EBA Guidelines)
+## Regulatory Context & Compliance
 
-Il tool è progettato seguendo i principi del **Validation Report** richiesto dalle autorità di vigilanza (**EBA/GL/2017/16** - *Guidelines on PD estimation, LGD estimation and the treatment of defaulted exposures*).
+### 1. ECB Validation Reporting (Chapter 2.5.3)
+In accordance with the **ECB Instructions on Validation Reporting (Section 2.5.3 - Predictive Ability)**, banks are required to demonstrate that their PD estimates are accurate predictors of realized default rates. For **Low-Default Portfolios (LDP)**, where traditional frequentist tests (like the Binomial Test) lack statistical power, the ECB allows for alternative robust methodologies. This tool bridges that gap by providing a Bayesian significance test.
 
-### Il Sistema "Traffic Light" (Semaforo)
-Secondo le best practice di vigilanza, l'esito del test viene classificato in tre fasce basate sul **p-value**:
+### 2. Supervisory Guide 2025 & EBA/GL/2017/16
+The **ECB Supervisory Guide 2025** and **EBA Guidelines** emphasize the principle of **Prudence**. Where data is scarce, models must incorporate a **Margin of Conservatism (MoC)**. The Jeffrey’s Test is a standard-of-practice for:
+* **Quantifying Underestimation:** Measuring the probability that the realized default rate exceeds the PD estimate.
+* **Rating Grade Analysis:** Validating calibration at a granular "Rating Bucket" level, as expected during On-Site Inspections (OSI).
 
-| Colore | Soglia p-value | Significato Regolamentare |
-| :--- | :--- | :--- |
-| **Verde** | $p > 0.05$ | Modello calibrato correttamente. Nessuna azione richiesta. |
-| **Giallo** | $0.01 < p \leq 0.05$ | Segnale di attenzione. Richiesto monitoraggio o analisi correttive. |
-| **Rosso** | $p \leq 0.01$ | Sottostima significativa. Obbligo di ricalibrazione del modello. |
+---
+
+## Statistical Rationale: Why Jeffrey’s Test?
+
+The Jeffrey’s Test utilizes a **Non-informative Prior** based on the $Beta(0.5, 0.5)$ distribution. This approach has critical implications for PD validation:
+
+* **Handling Zero Defaults:** In portfolios with zero realized defaults, frequentist models often fail to provide a meaningful p-value. Jeffrey’s Prior effectively assumes a "0.5 default" baseline, preventing the collapse of the statistical inference.
+* **Posterior PDF:** By updating the Prior with observed data ($D$ defaults, $N$ non-defaults), we obtain a **Posterior Beta Distribution**:
+  $$P(\text{PD} | \text{Data}) \sim Beta(D + 0.5, N - D + 0.5)$$
+* **One-Tailed Significance:** The test focuses on the "right tail" of the distribution to identify if the model is systematically underestimating risk—the primary concern for financial regulators.
 
 
 
 ---
 
-## Caratteristiche del Tool
-- **Input Dinamici:** Integrazione con Google Colab Forms per un utilizzo immediato.
-- **Visualizzazione HD:** Grafici vettoriali pronti per l'inserimento in presentazioni aziendali.
-- **Analisi Statistica:** Calcolo automatico di TD osservato, p-value e soglie critiche.
+## Features & Methodology
 
-## Requisiti Tecnici
-Il codice richiede le seguenti librerie Python:
-- `numpy`
-- `scipy`
-- `matplotlib`
-- `pandas`
+### Traffic Light System (TLS)
+The tool categorizes validation results into a three-zone system based on the p-value:
+* **🟢 Green (p > 0.05):** The model is well-calibrated or conservative.
+* **🟡 Yellow (0.01 < p ≤ 0.05):** Monitoring is required; potential calibration drift.
+* **🔴 Red (p ≤ 0.01):** Significant underestimation. Immediate recalibration or MoC adjustment required.
+
+### Technical Implementation
+* **Language:** Python 3.x
+* **Key Libraries:** `scipy.stats` (Beta distribution), `matplotlib` (HD visualization), `pandas` (Reporting).
+* **Environment:** Optimized for Google Colab with interactive forms.
 
 ---
 
-## Esempio di Output
-Il tool genera un report grafico che mostra la distribuzione di densità della PD e posiziona la stima del modello rispetto alla zona di rifiuto statistico.
-![Validazione PD](validazione_Portafoglio_Mutui_Retail.png)
+## Visualizing Results
+The tool generates a high-definition PDF/PNG report showing the **Posterior Density Function**. This visual aid helps validators understand the "safety margin" between the model's PD and the critical rejection threshold.
+
+![Validation Plot](validazione_Portafoglio_Mutui_Retail.png)
+
+---
+
+## Usage
+1. Clone the repository.
+2. Run the `jeffreys_test.py` script.
+3. Input your Portfolio Segment, Defaults, Non-defaults, and Model PD.
+4. Export the HD report for your Validation Document.
+
+---
+**Author:** Vittorio Pasculli 
+**Domain:** Risk Management | Credit Model Validation | Quantitative Finance

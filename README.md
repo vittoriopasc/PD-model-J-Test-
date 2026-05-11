@@ -53,7 +53,7 @@ The tool generates HD visualizations to assist in **Validation Reporting**:
 2. **Comparison Curve:** Shows how the Bayesian p-value evolves vs. the Frequentist one as the sample size ($N$) increases.
 
 ![Validation HD Report](validazione_Portafoglio_Mutui_Retail.png)
-
+![Validation HD Report](confrontotest.png)
 ---
 
 ## Installation & Usage

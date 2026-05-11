@@ -50,6 +50,7 @@ The tool categorizes validation results into a three-zone system based on the p-
 The tool generates a high-definition PDF/PNG report showing the **Posterior Density Function**. This visual aid helps validators understand the "safety margin" between the model's PD and the critical rejection threshold.
 
 ![Validation Plot](validazione_Portafoglio_Mutui_Retail.png)
+![Validation Plot](confrontotest.png)
 
 ---
 

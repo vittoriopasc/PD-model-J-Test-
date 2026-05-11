@@ -63,5 +63,5 @@ The tool generates HD visualizations to assist in **Validation Reporting**:
 4. Use the interactive Google Colab notebook for quick bucket-level checks.
 
 ---
-**Project Lead:** Vittorio Pascale  
+**Project Lead:** Vittorio Pasculli 
 **Keywords:** Risk Management | Model Validation | Basel III | Bayesian Statistics | Python

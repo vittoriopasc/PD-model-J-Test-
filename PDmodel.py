@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
 
-# Commented out IPython magic to ensure Python compatibility.
+
 #@title PD Validator: Jeffreys Test (EBA Compliant)
-#@markdown Inserisci i dati e clicca Play. 
 
 import numpy as np
 import matplotlib.pyplot as plt
